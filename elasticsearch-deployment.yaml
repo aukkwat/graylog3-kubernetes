@@ -21,7 +21,7 @@ spec:
         app: elasticsearch
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: ssd
+      storageClassName: default
       # NOTE: You can increase the storage size
       resources:
         requests:
