@@ -8,10 +8,11 @@ metadata:
   namespace: graylog
 spec:
   clusterIP: None
-  ports:
-  - name: headless
-    port: 55555
-    targetPort: 0
+ports:
+  - port: 9200
+    name: serving
+  - port: 9300
+    name: node-to-node
   selector:
     service: elasticsearch
 status:

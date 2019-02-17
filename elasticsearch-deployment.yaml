@@ -1,24 +1,73 @@
+# https://medium.com/google-cloud/a-guide-to-deploy-elasticsearch-cluster-on-google-kubernetes-engine-52f67743ee98
 apiVersion: extensions/v1beta1
 kind: Deployment
-metadata:
+  annotations:
+    kompose.version: 1.17.0 ()
   creationTimestamp: null
+  labels:
+    service: elasticsearch
   name: elasticsearch
   namespace: graylog
 spec:
   replicas: 4
+  selector:
+    matchLabels:
+      service: elasticsearch
   strategy: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: elasticsearch
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ssd
+      # NOTE: You can increase the storage size
+      resources:
+        requests:
+          storage: 10Gi
   template:
     metadata:
       creationTimestamp: null
       labels:
         service: elasticsearch
     spec:
+      terminationGracePeriodSeconds: 300
       containers:
-      - args:
-        - elasticsearch
-        - -Ecluster.name=graylog
-        image: docker.elastic.co/elasticsearch/elasticsearch:5.5.3
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        - name: bootstrap.memory_lock
+          value: "true"
+        - name: cluster.name
+          value: graylog
+        - name: node.name
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: xpack.security.enabled
+          value: "false"
+          # NOTE: This will tell the elasticsearch node where to connect to other nodes to form a cluster
+        - name: discovery.zen.ping.unicast.hosts
+          value: "elasticsearch-0.elasticsearch.default.svc.cluster.local,elasticsearch-1.elasticsearch.default.svc.cluster.local,elasticsearch-2.elasticsearch.default.svc.cluster.local,elasticsearch-3.elasticsearch.default.svc.cluster.local"
+        - name: discovery.zen.minimum_master_nodes
+          value: "2"
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.6.14
+        ports:
+        - containerPort: 9200
+          name: rest
+          protocol: TCP
+        - containerPort: 9300
+          name: inter-node
+          protocol: TCP
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/elasticsearch/data
         name: elasticsearch
-        resources: {}
+        resources:
+          requests:
+            memory: 8Gi
+          limits:
+            memory: 16Gi
       restartPolicy: Always
 status: {}

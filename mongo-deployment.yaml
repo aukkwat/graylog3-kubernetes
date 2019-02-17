@@ -1,7 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  annotations:
+    kompose.version: 1.17.0 ()
   creationTimestamp: null
+  labels:
+    service: mongo
   name: mongo
   namespace: graylog
 spec:
@@ -16,7 +20,9 @@ spec:
       containers:
       - image: mongo:3
         name: mongo
-        resources: {}
+        resources:
+          limits:
+            memory: 128Mi
         volumeMounts:
         - name: mongo-persistent-storage
           mountPath: /data/db
