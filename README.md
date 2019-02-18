@@ -1,5 +1,5 @@
-# graylog-kubernetes-mongo
-# graylog cluster in kubernetes (with MongoDB)
+# graylog 3 cluster with MongoDB in Kubernetes (still in development)
+
 # Steps to install graylog cluster 
 
 ### 1. Make sure kubectl is up and working , connecting to kubenetes
@@ -25,7 +25,7 @@ Connect to cluster and run rs.initiate()
 ```
 kubectl create -f ha-mongo-volume.yaml,ha-mongo-claim.yaml,elasticsearch-deployment.yaml,elasticsearch-service.yaml,graylog-service.yaml,graylog-deployment.yaml,mongo-deployment.yaml,mongo-service.yaml
 ```
-### 3. Update AWS loadbalancer created by graylog service
+### 3. Update loadbalancer endpoin uri created by graylog service
 ```
 kubectl get svc graylog -n graylog
 ```
