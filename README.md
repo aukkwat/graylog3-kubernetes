@@ -25,7 +25,7 @@ Connect to cluster and run rs.initiate()
 ```
 kubectl create -f ha-mongo-volume.yaml,ha-mongo-claim.yaml,elasticsearch-deployment.yaml,elasticsearch-service.yaml,graylog-service.yaml,graylog-deployment.yaml,mongo-deployment.yaml,mongo-service.yaml
 ```
-### 3. Update loadbalancer endpoin uri created by graylog service
+### 3. Update loadbalancer Graylog Http external URI created by graylog service
 ```
 kubectl get svc graylog -n graylog
 ```
@@ -34,11 +34,11 @@ Copy the aws loadbalancer created:
 (ex: ac19231203981012938012312319203-129380129830.us-west-2.elb.amazonaws.com):
 ```
 
-Edit the deployment of the graylog service and paste into WEB_ENDPOINT_URI
+Edit the deployment of the graylog service and paste into GRAYLOG_HTTP_EXTERNAL_URI
 ```
 kubectl edit deployment graylog -n graylog
 
-name: GRAYLOG_WEB_ENDPOINT_URI
+name: GRAYLOG_HTTP_EXTERNAL_URI
 value: http://ac19231203981012938012312319203-129380129830.us-west-2.elb.amazonaws.com/api
 ```
 ### 4. Forward port 9000 
